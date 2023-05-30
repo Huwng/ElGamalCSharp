@@ -5,7 +5,7 @@ using System.Text;
 using System.Windows.Forms;
 using System.Numerics;
 using System.IO;
-
+//TODO: Read and save to Microsoft Word document
 
 namespace ElGamalCSharp
 {
@@ -17,6 +17,7 @@ namespace ElGamalCSharp
         private BigInteger beta;
         private BigInteger p;
         private BigInteger a;
+        private readonly bool PowerUser = false;
         public Form1()
         {
             InitializeComponent();
@@ -26,6 +27,25 @@ namespace ElGamalCSharp
             btnSaveCiphertoFile.Enabled = false;
             btnSavePlaintoFile.Enabled = false;
             btnExportKeys.Enabled = false;
+            if(!PowerUser)
+            {
+                btnReset.Hide();
+                btnSetKey.Hide();
+                btnExportKeys.Hide();
+                btnImportKeys.Hide();
+                btnGenerateKey.Hide();
+                lblKeySet.Hide();
+                label1.Hide();
+                label2.Hide();
+                label3.Hide();
+                label4.Hide();
+                valA.Hide();
+                valAlpha.Hide();
+                valBeta.Hide();
+                valP.Hide();
+                GenerateKeys();
+                SetKey(true);
+            }
         }
         
 
@@ -147,7 +167,7 @@ namespace ElGamalCSharp
         private static BigInteger RandomPrimitiveRoot(BigInteger p, Random random)
         {
             BigInteger phi = p - BigInteger.One;
-            HashSet<BigInteger> factors = Factors(phi);
+            List<BigInteger> factors = Factors(phi);
             while (true)
             {
                 BigInteger g = RandomBigInt(BigInteger.One, p - BigInteger.One, random);
@@ -179,44 +199,54 @@ namespace ElGamalCSharp
             } while (val < min || val > max);
             return val;
         }
-        //TODO:Optimize this
-        private static HashSet<BigInteger> Factors(BigInteger num)
+        
+        private static int[] _primes = GeneratePrimes(100000); // Precomputed list of primes up to 100000
+
+        public static List<BigInteger> Factors(BigInteger n)
         {
-            HashSet<BigInteger> factors = new HashSet<BigInteger>();
-            while (num % 2 == 0)
+            List<BigInteger> factors = new List<BigInteger>();
+
+            // Check for small prime factors
+            while (n % 2 == 0)
             {
                 factors.Add(2);
-                num /= 2;
+                n /= 2;
             }
 
-            BigInteger factor = 3;
-            // Estimate square root using Newton-Raphson
-            var estimate = num / 2;
-            var lastEstimate = estimate + 1;
-            while (estimate < lastEstimate)
+            // Check for larger prime factors
+            foreach (int p in _primes)
             {
-                lastEstimate = estimate;
-                estimate = (num / estimate + estimate) / 2;
-            }
-            BigInteger maxFactor = estimate;
-
-            while (num > 1 && factor <= maxFactor)
-            {
-                while (num % factor == 0)
+                if (n <= 1)
+                    break;
+                while (n % p == 0)
                 {
-                    factors.Add(factor);
-                    num /= factor;
-                    maxFactor = num / factor;
+                    factors.Add(p);
+                    n /= p;
                 }
-                factor += 2;
             }
-            if (num > 2)
-            {
-                factors.Add(num);
-            }
+
+            // If there's anything left of n, it's a prime factor
+            if (n > 1)
+                factors.Add(n);
+
             return factors;
         }
 
+        private static int[] GeneratePrimes(int limit)
+        {
+            bool[] isComposite = new bool[limit + 1];
+            List<int> primes = new List<int>();
+            for (int i = 2; i <= limit; i++)
+            {
+                if (!isComposite[i])
+                {
+                    primes.Add(i);
+                    for (int j = 2 * i; j <= limit; j += i)
+                        isComposite[j] = true;
+                }
+            }
+            return primes.ToArray();
+        }
 
 
         private BigInteger GenerateK(BigInteger p)
@@ -328,8 +358,6 @@ namespace ElGamalCSharp
             byte[] plainTextBytes = Encoding.Unicode.GetBytes(message);
             byte[] y1Bytes = y1.ToByteArray();
             byte[] encrypted = y1Bytes;
-            //int count = 0;
-            //TODO: clean up this shit
             for (int i = 0; i < plainTextBytes.Length; i += 8)
             {
                 int remainingBytes = Math.Min(8, plainTextBytes.Length-i);
@@ -341,7 +369,6 @@ namespace ElGamalCSharp
                 byte[] y2Bytes = y2.ToByteArray();
                 if (y2Bytes.Length %2 != 0) { y2Bytes = y2Bytes.Append<byte>(0).ToArray(); };
                 encrypted = Combine(encrypted, y2Bytes);
-                //Console.WriteLine(count++ +". "+Encoding.Unicode.GetString(plainTextBlocks) + " | " + y2 + " | "+ BitConverter.ToString(y2Bytes));
             }
             
             string cipherText = Convert.ToBase64String(encrypted);
@@ -365,21 +392,16 @@ namespace ElGamalCSharp
             BigInteger y1 = new BigInteger(y1Bytes);
             BigInteger secret = BigInteger.ModPow(y1, a, p);
             BigInteger secretInverse = BigInteger.ModPow(secret, p - 2, p);
-            //int count = 0;
-            //TODO: clean up code when done
-            //TODO: splice y2 to multiple 8-byte subarrays
             for (int i = pLength; i < encrypted.Length; i+=8)
             {
                 int remainingBytes = Math.Min(8,encrypted.Length-i);
                 byte[] y2bytes = new byte[remainingBytes];
                 Buffer.BlockCopy(encrypted,i,y2bytes,0,remainingBytes);
                 BigInteger y2 = new BigInteger(y2bytes);
-                //if (y2.Sign == -1) { y2 = BigInteger.Negate(y2); };
                 BigInteger decrypted = BigInteger.Remainder(y2 * secretInverse, p);
                 byte[] decryptedBytes = decrypted.ToByteArray();
                 if (decryptedBytes.Length % 2 != 0) { decryptedBytes = decryptedBytes.Append<byte>(0).ToArray(); }
                 plainText += Encoding.Unicode.GetString(decryptedBytes);
-                //Console.WriteLine(count++ + ". "+BitConverter.ToString(y2bytes)+" | " +y2 + " | " + Encoding.Unicode.GetString(decryptedBytes));
             }
             boxPlainTextOutput.Text = plainText;
             btnSavePlaintoFile.Enabled = true;
