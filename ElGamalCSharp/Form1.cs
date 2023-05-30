@@ -167,7 +167,7 @@ namespace ElGamalCSharp
         private static BigInteger RandomPrimitiveRoot(BigInteger p, Random random)
         {
             BigInteger phi = p - BigInteger.One;
-            List<BigInteger> factors = Factors(phi);
+            HashSet<BigInteger> factors = Factors(phi);
             while (true)
             {
                 BigInteger g = RandomBigInt(BigInteger.One, p - BigInteger.One, random);
@@ -202,9 +202,9 @@ namespace ElGamalCSharp
         
         private static int[] _primes = GeneratePrimes(10000000); // Precomputed list of primes up to 10000000
 
-        public static List<BigInteger> Factors(BigInteger n)
+        public static HashSet<BigInteger> Factors(BigInteger n)
         {
-            List<BigInteger> factors = new List<BigInteger>();
+            HashSet<BigInteger> factors = new HashSet<BigInteger>();
 
             // Check for small prime factors
             while (n % 2 == 0)
@@ -235,7 +235,7 @@ namespace ElGamalCSharp
         private static int[] GeneratePrimes(int limit)
         {
             bool[] isComposite = new bool[limit + 1];
-            List<int> primes = new List<int>();
+            HashSet<int> primes = new HashSet<int>();
             for (int i = 2; i <= limit; i++)
             {
                 if (!isComposite[i])
