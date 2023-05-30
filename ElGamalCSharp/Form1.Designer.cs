@@ -51,6 +51,8 @@
             this.btnSaveCiphertoFile = new System.Windows.Forms.Button();
             this.btnSavePlaintoFile = new System.Windows.Forms.Button();
             this.btnReadCipherfromFile = new System.Windows.Forms.Button();
+            this.btnExportKeys = new System.Windows.Forms.Button();
+            this.btnImportKeys = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // btnEncrypt
@@ -86,7 +88,7 @@
             this.boxCipherTextInput.Location = new System.Drawing.Point(625, 122);
             this.boxCipherTextInput.Multiline = true;
             this.boxCipherTextInput.Name = "boxCipherTextInput";
-            this.boxCipherTextInput.Size = new System.Drawing.Size(297, 153);
+            this.boxCipherTextInput.Size = new System.Drawing.Size(314, 153);
             this.boxCipherTextInput.TabIndex = 3;
             // 
             // boxCipherTextOutput
@@ -104,7 +106,7 @@
             this.boxPlainTextOutput.Multiline = true;
             this.boxPlainTextOutput.Name = "boxPlainTextOutput";
             this.boxPlainTextOutput.ReadOnly = true;
-            this.boxPlainTextOutput.Size = new System.Drawing.Size(297, 194);
+            this.boxPlainTextOutput.Size = new System.Drawing.Size(314, 194);
             this.boxPlainTextOutput.TabIndex = 6;
             // 
             // label1
@@ -183,7 +185,7 @@
             // 
             // btnSetKey
             // 
-            this.btnSetKey.Location = new System.Drawing.Point(388, 79);
+            this.btnSetKey.Location = new System.Drawing.Point(785, 29);
             this.btnSetKey.Name = "btnSetKey";
             this.btnSetKey.Size = new System.Drawing.Size(75, 23);
             this.btnSetKey.TabIndex = 16;
@@ -193,7 +195,7 @@
             // 
             // btnReset
             // 
-            this.btnReset.Location = new System.Drawing.Point(503, 78);
+            this.btnReset.Location = new System.Drawing.Point(453, 86);
             this.btnReset.Name = "btnReset";
             this.btnReset.Size = new System.Drawing.Size(75, 23);
             this.btnReset.TabIndex = 17;
@@ -204,7 +206,7 @@
             // lblKeySet
             // 
             this.lblKeySet.AutoSize = true;
-            this.lblKeySet.Location = new System.Drawing.Point(803, 34);
+            this.lblKeySet.Location = new System.Drawing.Point(890, 34);
             this.lblKeySet.Name = "lblKeySet";
             this.lblKeySet.Size = new System.Drawing.Size(63, 13);
             this.lblKeySet.TabIndex = 18;
@@ -242,7 +244,7 @@
             // 
             // btnSavePlaintoFile
             // 
-            this.btnSavePlaintoFile.Location = new System.Drawing.Point(944, 493);
+            this.btnSavePlaintoFile.Location = new System.Drawing.Point(954, 493);
             this.btnSavePlaintoFile.Name = "btnSavePlaintoFile";
             this.btnSavePlaintoFile.Size = new System.Drawing.Size(94, 23);
             this.btnSavePlaintoFile.TabIndex = 22;
@@ -252,7 +254,7 @@
             // 
             // btnReadCipherfromFile
             // 
-            this.btnReadCipherfromFile.Location = new System.Drawing.Point(944, 145);
+            this.btnReadCipherfromFile.Location = new System.Drawing.Point(954, 145);
             this.btnReadCipherfromFile.Name = "btnReadCipherfromFile";
             this.btnReadCipherfromFile.Size = new System.Drawing.Size(94, 23);
             this.btnReadCipherfromFile.TabIndex = 23;
@@ -260,11 +262,33 @@
             this.btnReadCipherfromFile.UseVisualStyleBackColor = true;
             this.btnReadCipherfromFile.Click += new System.EventHandler(this.btnReadCipherfromFile_Click);
             // 
+            // btnExportKeys
+            // 
+            this.btnExportKeys.Location = new System.Drawing.Point(785, 59);
+            this.btnExportKeys.Name = "btnExportKeys";
+            this.btnExportKeys.Size = new System.Drawing.Size(75, 23);
+            this.btnExportKeys.TabIndex = 24;
+            this.btnExportKeys.Text = "Export keys";
+            this.btnExportKeys.UseVisualStyleBackColor = true;
+            this.btnExportKeys.Click += new System.EventHandler(this.btnExportKeys_Click);
+            // 
+            // btnImportKeys
+            // 
+            this.btnImportKeys.Location = new System.Drawing.Point(785, 88);
+            this.btnImportKeys.Name = "btnImportKeys";
+            this.btnImportKeys.Size = new System.Drawing.Size(75, 23);
+            this.btnImportKeys.TabIndex = 25;
+            this.btnImportKeys.Text = "Import keys";
+            this.btnImportKeys.UseVisualStyleBackColor = true;
+            this.btnImportKeys.Click += new System.EventHandler(this.btnImportKeys_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1060, 581);
+            this.Controls.Add(this.btnImportKeys);
+            this.Controls.Add(this.btnExportKeys);
             this.Controls.Add(this.btnReadCipherfromFile);
             this.Controls.Add(this.btnSavePlaintoFile);
             this.Controls.Add(this.btnSaveCiphertoFile);
@@ -320,6 +344,8 @@
         private System.Windows.Forms.Button btnSaveCiphertoFile;
         private System.Windows.Forms.Button btnSavePlaintoFile;
         private System.Windows.Forms.Button btnReadCipherfromFile;
+        private System.Windows.Forms.Button btnExportKeys;
+        private System.Windows.Forms.Button btnImportKeys;
     }
 }
 

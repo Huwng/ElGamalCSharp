@@ -25,6 +25,7 @@ namespace ElGamalCSharp
             btnSendToDecrypt.Enabled = false;
             btnSaveCiphertoFile.Enabled = false;
             btnSavePlaintoFile.Enabled = false;
+            btnExportKeys.Enabled = false;
         }
         
 
@@ -37,19 +38,6 @@ namespace ElGamalCSharp
         {
             Decrypt(boxCipherTextInput.Text);
         }
-
-        /*private byte[] CutZeroBytes(byte[] bytes)
-        {
-            int offset = 0;
-            while (offset < bytes.Length && bytes[offset] == 0)
-            {
-                offset++;
-            }
-
-            byte[] trimmedBytes = new byte[bytes.Length - offset];
-            Buffer.BlockCopy(bytes, offset, trimmedBytes, 0, trimmedBytes.Length);
-            return trimmedBytes;
-        }*/
 
         private byte[] Combine(byte[] first, byte[] second)
         {
@@ -75,6 +63,7 @@ namespace ElGamalCSharp
         {
             GenerateKeys();
             SetKey(true);
+            btnExportKeys.Enabled = true;
         }
         private static BigInteger RandomPrime(int bitLength, Random random)
         {
@@ -190,34 +179,11 @@ namespace ElGamalCSharp
             } while (val < min || val > max);
             return val;
         }
-
-        /*private static HashSet<BigInteger> Factors(BigInteger num)
-        {
-            HashSet<BigInteger> factors = new HashSet<BigInteger>();
-            BigInteger factor = 2;
-            while (num > BigInteger.One)
-            {
-                while (num % factor == BigInteger.Zero)
-                {
-                    factors.Add(factor);
-                    num /= factor;
-                }
-                factor += BigInteger.One;
-                if (factor * factor > num)
-                {
-                    if (num > BigInteger.One)
-                    {
-                        factors.Add(num);
-                    }
-                    break;
-                }
-            }
-            return factors;
-        }*/
+        //TODO:Optimize this
         private static HashSet<BigInteger> Factors(BigInteger num)
         {
             HashSet<BigInteger> factors = new HashSet<BigInteger>();
-            if (num % 2 == 0)
+            while (num % 2 == 0)
             {
                 factors.Add(2);
                 num /= 2;
@@ -309,6 +275,7 @@ namespace ElGamalCSharp
             btnSetKey.Enabled = false;
             btnDecrypt.Enabled = true;
             btnEncrypt.Enabled = true;
+            btnExportKeys.Enabled = true;
         }
         
         private bool ValidateKey()
@@ -338,6 +305,7 @@ namespace ElGamalCSharp
             btnSendToDecrypt.Enabled = false;
             btnSaveCiphertoFile.Enabled = false;
             btnSavePlaintoFile.Enabled = false;
+            btnExportKeys.Enabled = false;
             lblKeySet.Text = "Key not set!";
         }
 
@@ -489,6 +457,52 @@ namespace ElGamalCSharp
                 try
                 {
                     File.WriteAllText(saveFileDialog.FileName, boxPlainTextOutput.Text);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Exception caught! \nMessage: {ex.Message}", "Exception!", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+        }
+
+        private void btnExportKeys_Click(object sender, EventArgs e)
+        {
+            SaveFileDialog saveFileDialog = new SaveFileDialog
+            {
+                Filter = "Text Document|*.txt",
+                Title = "Save encryption keys to File"
+            };
+            if (saveFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                try
+                {
+                    File.WriteAllText(saveFileDialog.FileName, valAlpha.Text+" "+valBeta.Text+" "+valP.Text+" "+valA.Text);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Exception caught! \nMessage: {ex.Message}", "Exception!", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+        }
+
+        private void btnImportKeys_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog
+            {
+                Filter = "Text Document|*.txt",
+                Title = "Read encryption keys from File"
+            };
+            if (openFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                try
+                {
+                    string content = File.ReadAllText(openFileDialog.FileName);
+                    string[] keys = content.Split(' ');
+                    valAlpha.Text = keys[0];
+                    valBeta.Text = keys[1];
+                    valP.Text = keys[2];
+                    valA.Text = keys[3];
+                    SetKey(false);
                 }
                 catch (Exception ex)
                 {
