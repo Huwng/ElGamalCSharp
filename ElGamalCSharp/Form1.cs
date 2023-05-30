@@ -200,7 +200,7 @@ namespace ElGamalCSharp
             return val;
         }
         
-        private static int[] _primes = GeneratePrimes(100000); // Precomputed list of primes up to 100000
+        private static int[] _primes = GeneratePrimes(10000000); // Precomputed list of primes up to 10000000
 
         public static List<BigInteger> Factors(BigInteger n)
         {
