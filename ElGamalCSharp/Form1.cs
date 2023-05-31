@@ -11,13 +11,13 @@ namespace ElGamalCSharp
 {
     public partial class Form1 : Form
     {
-        private readonly int bitLength = 64;
+        private readonly int bitLength = 128;
         private static readonly Random random = new Random();
         private BigInteger alpha;
         private BigInteger beta;
         private BigInteger p;
         private BigInteger a;
-        private readonly bool PowerUser = false;
+        private readonly bool PowerUser = true;
         public Form1()
         {
             InitializeComponent();
@@ -27,7 +27,7 @@ namespace ElGamalCSharp
             btnSaveCiphertoFile.Enabled = false;
             btnSavePlaintoFile.Enabled = false;
             btnExportKeys.Enabled = false;
-            if(!PowerUser)
+            if (!PowerUser)
             {
                 btnReset.Hide();
                 btnSetKey.Hide();
@@ -47,7 +47,7 @@ namespace ElGamalCSharp
                 SetKey(true);
             }
         }
-        
+
 
         private void btnEncrypt_Click(object sender, EventArgs e)
         {
@@ -71,7 +71,7 @@ namespace ElGamalCSharp
         {
             BigInteger valp = RandomPrime(bitLength, random);
             BigInteger valalpha = RandomPrimitiveRoot(valp, random);
-            BigInteger vala = RandomBigInt(BigInteger.One, valp-BigInteger.One, random);
+            BigInteger vala = RandomBigInt(BigInteger.One, valp - BigInteger.One, random);
             BigInteger valbeta = BigInteger.ModPow(valalpha, vala, valp);
             valAlpha.Text = valalpha.ToString();
             valBeta.Text = valbeta.ToString();  //public key
@@ -96,6 +96,7 @@ namespace ElGamalCSharp
                 p = BigInteger.Abs(p);
                 p = BigInteger.Add(p, BigInteger.One);
             } while (!IsPrime(p));
+            Console.WriteLine(p);
             return p;
         }
 
@@ -199,7 +200,7 @@ namespace ElGamalCSharp
             } while (val < min || val > max);
             return val;
         }
-        
+
         private static int[] _primes = GeneratePrimes(10000000); // Precomputed list of primes up to 10000000
 
         public static HashSet<BigInteger> Factors(BigInteger n)
@@ -254,8 +255,8 @@ namespace ElGamalCSharp
             BigInteger k;
             do
             {
-                k = RandomBigInt(2, p-2, random);
-            } while (BigInteger.GreatestCommonDivisor(k,p-BigInteger.One) != 1);
+                k = RandomBigInt(2, p - 2, random);
+            } while (BigInteger.GreatestCommonDivisor(k, p - BigInteger.One) != 1);
             return k;
         }
 
@@ -267,7 +268,7 @@ namespace ElGamalCSharp
         {
             if (valA.Text == "" || valAlpha.Text == "" || valBeta.Text == "" || valP.Text == "")
             {
-                MessageBox.Show("Please enter all necessary values. (or click Generate key button)","Error",MessageBoxButtons.OK,MessageBoxIcon.Error);
+                MessageBox.Show("Please enter all necessary values. (or click Generate key button)", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
             if (!BigInteger.TryParse(valA.Text, out a))
@@ -293,11 +294,13 @@ namespace ElGamalCSharp
             if (auto)
             {
                 lblKeySet.Text = "Key automatically set!";
-            } else
+            }
+            else
             {
-                if (ValidateKey()) lblKeySet.Text = "Key manually set!"; else
+                if (ValidateKey()) lblKeySet.Text = "Key manually set!";
+                else
                 {
-                    MessageBox.Show("Key is not valid. Resetting..","Warning",MessageBoxButtons.OK,MessageBoxIcon.Warning);
+                    MessageBox.Show("Key is not valid. Resetting..", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     Reset();
                     return;
                 }
@@ -307,7 +310,7 @@ namespace ElGamalCSharp
             btnEncrypt.Enabled = true;
             btnExportKeys.Enabled = true;
         }
-        
+
         private bool ValidateKey()
         {
             if (IsPrime(p) && alpha < p && a > 1 && a <= p - 2)
@@ -344,7 +347,7 @@ namespace ElGamalCSharp
             boxCipherTextInput.Text = boxCipherTextOutput.Text;
         }
 
-        
+
         private void Encrypt(string message)
         {
             if (message == string.Empty)
@@ -352,25 +355,26 @@ namespace ElGamalCSharp
                 MessageBox.Show("Enter something to encrypt first!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
+            int pLength = p.ToByteArray().Length;
             BigInteger k = GenerateK(p);
             BigInteger oneTimeKey = BigInteger.ModPow(beta, k, p);
             BigInteger y1 = BigInteger.ModPow(alpha, k, p);
             byte[] plainTextBytes = Encoding.Unicode.GetBytes(message);
             byte[] y1Bytes = y1.ToByteArray();
             byte[] encrypted = y1Bytes;
-            for (int i = 0; i < plainTextBytes.Length; i += 8)
+            for (int i = 0; i < plainTextBytes.Length; i += pLength)
             {
-                int remainingBytes = Math.Min(8, plainTextBytes.Length-i);
+                int remainingBytes = Math.Min(pLength, plainTextBytes.Length - i);
                 byte[] plainTextBlocks = new byte[remainingBytes];
-                Buffer.BlockCopy(plainTextBytes, i, plainTextBlocks, 0, remainingBytes);        
+                Buffer.BlockCopy(plainTextBytes, i, plainTextBlocks, 0, remainingBytes);
                 BigInteger plainText = new BigInteger(plainTextBlocks);
-                BigInteger y2 = BigInteger.Remainder(BigInteger.Multiply(plainText,oneTimeKey), p);
-                
+                BigInteger y2 = BigInteger.Remainder(BigInteger.Multiply(plainText, oneTimeKey), p);
+
                 byte[] y2Bytes = y2.ToByteArray();
-                if (y2Bytes.Length %2 != 0) { y2Bytes = y2Bytes.Append<byte>(0).ToArray(); };
+                if (y2Bytes.Length % 2 != 0) { y2Bytes = y2Bytes.Append<byte>(0).ToArray(); };
                 encrypted = Combine(encrypted, y2Bytes);
             }
-            
+
             string cipherText = Convert.ToBase64String(encrypted);
             boxCipherTextOutput.Text = cipherText;
             btnSendToDecrypt.Enabled = true;
@@ -379,7 +383,7 @@ namespace ElGamalCSharp
         }
         private void Decrypt(string message)
         {
-            if(message == string.Empty)
+            if (message == string.Empty)
             {
                 MessageBox.Show("Enter something to decrypt first!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
@@ -392,11 +396,11 @@ namespace ElGamalCSharp
             BigInteger y1 = new BigInteger(y1Bytes);
             BigInteger secret = BigInteger.ModPow(y1, a, p);
             BigInteger secretInverse = BigInteger.ModPow(secret, p - 2, p);
-            for (int i = pLength; i < encrypted.Length; i+=8)
+            for (int i = pLength; i < encrypted.Length; i += pLength)
             {
-                int remainingBytes = Math.Min(8,encrypted.Length-i);
+                int remainingBytes = Math.Min(pLength, encrypted.Length - i);
                 byte[] y2bytes = new byte[remainingBytes];
-                Buffer.BlockCopy(encrypted,i,y2bytes,0,remainingBytes);
+                Buffer.BlockCopy(encrypted, i, y2bytes, 0, remainingBytes);
                 BigInteger y2 = new BigInteger(y2bytes);
                 BigInteger decrypted = BigInteger.Remainder(y2 * secretInverse, p);
                 byte[] decryptedBytes = decrypted.ToByteArray();
@@ -420,8 +424,10 @@ namespace ElGamalCSharp
                 {
                     string content = File.ReadAllText(openFileDialog.FileName);
                     boxPlainTextInput.Text = content;
-                } catch (Exception ex) {
-                    MessageBox.Show($"Exception caught! \nMessage: {ex.Message}","Exception!",MessageBoxButtons.OK,MessageBoxIcon.Error);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Exception caught! \nMessage: {ex.Message}", "Exception!", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
         }
@@ -498,7 +504,7 @@ namespace ElGamalCSharp
             {
                 try
                 {
-                    File.WriteAllText(saveFileDialog.FileName, valAlpha.Text+" "+valBeta.Text+" "+valP.Text+" "+valA.Text);
+                    File.WriteAllText(saveFileDialog.FileName, valAlpha.Text + " " + valBeta.Text + " " + valP.Text + " " + valA.Text);
                 }
                 catch (Exception ex)
                 {
