@@ -5,19 +5,19 @@ using System.Text;
 using System.Windows.Forms;
 using System.Numerics;
 using System.IO;
-//TODO: Read and save to Microsoft Word document
+using Microsoft.Office.Interop.Word;
 
 namespace ElGamalCSharp
 {
     public partial class Form1 : Form
     {
-        private readonly int bitLength = 128;
+        private readonly int bitLength = 64;
         private static readonly Random random = new Random();
         private BigInteger alpha;
         private BigInteger beta;
         private BigInteger p;
         private BigInteger a;
-        private readonly bool PowerUser = true;
+        private readonly bool PowerUser = false;
         public Form1()
         {
             InitializeComponent();
@@ -51,7 +51,7 @@ namespace ElGamalCSharp
 
         private void btnEncrypt_Click(object sender, EventArgs e)
         {
-            Encrypt(boxPlainTextInput.Text);
+            Encrypt(boxPlainTextInput.Rtf);
         }
 
         private void btnDecrypt_Click(object sender, EventArgs e)
@@ -96,7 +96,6 @@ namespace ElGamalCSharp
                 p = BigInteger.Abs(p);
                 p = BigInteger.Add(p, BigInteger.One);
             } while (!IsPrime(p));
-            Console.WriteLine(p);
             return p;
         }
 
@@ -344,7 +343,7 @@ namespace ElGamalCSharp
 
         private void btnSendToDecrypt_Click(object sender, EventArgs e)
         {
-            boxCipherTextInput.Text = boxCipherTextOutput.Text;
+            boxCipherTextInput.Rtf = boxCipherTextOutput.Rtf;
         }
 
 
@@ -379,7 +378,6 @@ namespace ElGamalCSharp
             boxCipherTextOutput.Text = cipherText;
             btnSendToDecrypt.Enabled = true;
             btnSaveCiphertoFile.Enabled = true;
-            Console.WriteLine();
         }
         private void Decrypt(string message)
         {
@@ -407,7 +405,7 @@ namespace ElGamalCSharp
                 if (decryptedBytes.Length % 2 != 0) { decryptedBytes = decryptedBytes.Append<byte>(0).ToArray(); }
                 plainText += Encoding.Unicode.GetString(decryptedBytes);
             }
-            boxPlainTextOutput.Text = plainText;
+            boxPlainTextOutput.Rtf = plainText;
             btnSavePlaintoFile.Enabled = true;
         }
 
@@ -415,15 +413,30 @@ namespace ElGamalCSharp
         {
             OpenFileDialog openFileDialog = new OpenFileDialog
             {
-                Filter = "Text Document|*.txt",
+                Filter = "Text Document|*.txt|Microsoft Word Document|*.docx",
                 Title = "Read plain text from File"
             };
             if (openFileDialog.ShowDialog() == DialogResult.OK)
             {
                 try
                 {
-                    string content = File.ReadAllText(openFileDialog.FileName);
-                    boxPlainTextInput.Text = content;
+                    boxPlainTextInput.Clear();
+                    string filePath = openFileDialog.FileName;
+                    string fileExtension = Path.GetExtension(filePath);
+                    if (fileExtension == ".txt")
+                    {
+                        string content = File.ReadAllText(openFileDialog.FileName);
+                        boxPlainTextInput.Text = content;
+                    }
+                    if (fileExtension == ".docx")
+                    {
+                        Microsoft.Office.Interop.Word.Application wordApp = new Microsoft.Office.Interop.Word.Application();
+                        Document document = wordApp.Documents.Open(filePath);
+                        document.Content.Copy();
+                        boxPlainTextInput.Paste();
+                        document.Close();
+                        wordApp.Quit();
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -436,14 +449,28 @@ namespace ElGamalCSharp
         {
             SaveFileDialog saveFileDialog = new SaveFileDialog
             {
-                Filter = "Text Document|*.txt",
+                Filter = "Text Document|*.txt|Microsoft Word Document|*.docx",
                 Title = "Save cipher text to File"
             };
             if (saveFileDialog.ShowDialog() == DialogResult.OK)
             {
                 try
                 {
-                    File.WriteAllText(saveFileDialog.FileName, boxCipherTextOutput.Text);
+                    string fileName = saveFileDialog.FileName;
+                    string fileExtension = Path.GetExtension(fileName);
+                    if (fileExtension == ".txt")
+                    {
+                        File.WriteAllText(saveFileDialog.FileName, boxCipherTextOutput.Text);
+                    }
+                    if (fileExtension == ".docx")
+                    {
+                        Microsoft.Office.Interop.Word.Application wordApp = new Microsoft.Office.Interop.Word.Application();
+                        Document document = wordApp.Documents.Add();
+                        document.Content.Text = boxCipherTextOutput.Text;
+                        document.SaveAs(fileName);
+                        document.Close();
+                        wordApp.Quit();
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -456,15 +483,31 @@ namespace ElGamalCSharp
         {
             OpenFileDialog openFileDialog = new OpenFileDialog
             {
-                Filter = "Text Document|*.txt",
+                Filter = "Text Document|*.txt|Microsoft Word Document|*.docx",
                 Title = "Read cipher text from File"
             };
             if (openFileDialog.ShowDialog() == DialogResult.OK)
             {
                 try
                 {
-                    string content = File.ReadAllText(openFileDialog.FileName);
-                    boxCipherTextInput.Text = content;
+                    boxCipherTextInput.Clear();
+                    string filePath = openFileDialog.FileName;
+                    string fileExtension = Path.GetExtension(filePath);
+                    if (fileExtension == ".txt")
+                    {
+                        string content = File.ReadAllText(openFileDialog.FileName);
+                        boxCipherTextInput.Text = content;
+                    }
+                    if (fileExtension == ".docx")
+                    {
+                        Microsoft.Office.Interop.Word.Application wordApp = new Microsoft.Office.Interop.Word.Application();
+                        Document document = wordApp.Documents.Open(filePath);
+                        document.Content.Copy();
+                        boxCipherTextInput.Paste();
+                        document.Close();
+                        wordApp.Quit();
+                        
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -477,14 +520,31 @@ namespace ElGamalCSharp
         {
             SaveFileDialog saveFileDialog = new SaveFileDialog
             {
-                Filter = "Text Document|*.txt",
+                Filter = "Text Document|*.txt|Microsoft Word Document|*.docx",
                 Title = "Save plain text to File"
             };
             if (saveFileDialog.ShowDialog() == DialogResult.OK)
             {
                 try
                 {
-                    File.WriteAllText(saveFileDialog.FileName, boxPlainTextOutput.Text);
+                    string fileName = saveFileDialog.FileName;
+                    string fileExtension = Path.GetExtension(fileName);
+                    if (fileExtension == ".txt")
+                    {
+                        File.WriteAllText(saveFileDialog.FileName, boxPlainTextOutput.Text);
+                    }
+                    if (fileExtension == ".docx")
+                    {
+                        Microsoft.Office.Interop.Word.Application wordApp = new Microsoft.Office.Interop.Word.Application();
+                        byte[] RTFdata = Encoding.UTF8.GetBytes(boxPlainTextOutput.Rtf);
+                        string tempPath = Path.Combine(Path.GetTempPath(), "temp.rtf");
+                        File.WriteAllBytes(tempPath, RTFdata);
+                        Document document = wordApp.Documents.Open(tempPath);
+                        document.SaveAs2(fileName,WdSaveFormat.wdFormatDocumentDefault);
+                        document.Close();
+                        wordApp.Quit();
+                        File.Delete(tempPath);
+                    }
                 }
                 catch (Exception ex)
                 {

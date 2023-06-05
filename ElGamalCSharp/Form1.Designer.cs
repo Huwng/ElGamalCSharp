@@ -30,10 +30,6 @@
         {
             this.btnEncrypt = new System.Windows.Forms.Button();
             this.btnDecrypt = new System.Windows.Forms.Button();
-            this.boxPlainTextInput = new System.Windows.Forms.TextBox();
-            this.boxCipherTextInput = new System.Windows.Forms.TextBox();
-            this.boxCipherTextOutput = new System.Windows.Forms.TextBox();
-            this.boxPlainTextOutput = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.btnGenerateKey = new System.Windows.Forms.Button();
@@ -53,6 +49,10 @@
             this.btnReadCipherfromFile = new System.Windows.Forms.Button();
             this.btnExportKeys = new System.Windows.Forms.Button();
             this.btnImportKeys = new System.Windows.Forms.Button();
+            this.boxPlainTextInput = new System.Windows.Forms.RichTextBox();
+            this.boxCipherTextInput = new System.Windows.Forms.RichTextBox();
+            this.boxCipherTextOutput = new System.Windows.Forms.RichTextBox();
+            this.boxPlainTextOutput = new System.Windows.Forms.RichTextBox();
             this.SuspendLayout();
             // 
             // btnEncrypt
@@ -74,40 +74,6 @@
             this.btnDecrypt.Text = "Decrypt";
             this.btnDecrypt.UseVisualStyleBackColor = true;
             this.btnDecrypt.Click += new System.EventHandler(this.btnDecrypt_Click);
-            // 
-            // boxPlainTextInput
-            // 
-            this.boxPlainTextInput.Location = new System.Drawing.Point(67, 122);
-            this.boxPlainTextInput.Multiline = true;
-            this.boxPlainTextInput.Name = "boxPlainTextInput";
-            this.boxPlainTextInput.Size = new System.Drawing.Size(314, 153);
-            this.boxPlainTextInput.TabIndex = 2;
-            // 
-            // boxCipherTextInput
-            // 
-            this.boxCipherTextInput.Location = new System.Drawing.Point(625, 122);
-            this.boxCipherTextInput.Multiline = true;
-            this.boxCipherTextInput.Name = "boxCipherTextInput";
-            this.boxCipherTextInput.Size = new System.Drawing.Size(314, 153);
-            this.boxCipherTextInput.TabIndex = 3;
-            // 
-            // boxCipherTextOutput
-            // 
-            this.boxCipherTextOutput.Location = new System.Drawing.Point(67, 351);
-            this.boxCipherTextOutput.Multiline = true;
-            this.boxCipherTextOutput.Name = "boxCipherTextOutput";
-            this.boxCipherTextOutput.ReadOnly = true;
-            this.boxCipherTextOutput.Size = new System.Drawing.Size(314, 194);
-            this.boxCipherTextOutput.TabIndex = 4;
-            // 
-            // boxPlainTextOutput
-            // 
-            this.boxPlainTextOutput.Location = new System.Drawing.Point(625, 351);
-            this.boxPlainTextOutput.Multiline = true;
-            this.boxPlainTextOutput.Name = "boxPlainTextOutput";
-            this.boxPlainTextOutput.ReadOnly = true;
-            this.boxPlainTextOutput.Size = new System.Drawing.Size(314, 194);
-            this.boxPlainTextOutput.TabIndex = 6;
             // 
             // label1
             // 
@@ -206,7 +172,7 @@
             // lblKeySet
             // 
             this.lblKeySet.AutoSize = true;
-            this.lblKeySet.Location = new System.Drawing.Point(890, 34);
+            this.lblKeySet.Location = new System.Drawing.Point(782, 9);
             this.lblKeySet.Name = "lblKeySet";
             this.lblKeySet.Size = new System.Drawing.Size(63, 13);
             this.lblKeySet.TabIndex = 18;
@@ -264,7 +230,7 @@
             // 
             // btnExportKeys
             // 
-            this.btnExportKeys.Location = new System.Drawing.Point(785, 59);
+            this.btnExportKeys.Location = new System.Drawing.Point(866, 31);
             this.btnExportKeys.Name = "btnExportKeys";
             this.btnExportKeys.Size = new System.Drawing.Size(75, 23);
             this.btnExportKeys.TabIndex = 24;
@@ -274,7 +240,7 @@
             // 
             // btnImportKeys
             // 
-            this.btnImportKeys.Location = new System.Drawing.Point(785, 88);
+            this.btnImportKeys.Location = new System.Drawing.Point(947, 30);
             this.btnImportKeys.Name = "btnImportKeys";
             this.btnImportKeys.Size = new System.Drawing.Size(75, 23);
             this.btnImportKeys.TabIndex = 25;
@@ -282,11 +248,47 @@
             this.btnImportKeys.UseVisualStyleBackColor = true;
             this.btnImportKeys.Click += new System.EventHandler(this.btnImportKeys_Click);
             // 
+            // boxPlainTextInput
+            // 
+            this.boxPlainTextInput.Location = new System.Drawing.Point(32, 88);
+            this.boxPlainTextInput.Name = "boxPlainTextInput";
+            this.boxPlainTextInput.Size = new System.Drawing.Size(351, 212);
+            this.boxPlainTextInput.TabIndex = 26;
+            this.boxPlainTextInput.Text = "";
+            // 
+            // boxCipherTextInput
+            // 
+            this.boxCipherTextInput.Location = new System.Drawing.Point(597, 76);
+            this.boxCipherTextInput.Name = "boxCipherTextInput";
+            this.boxCipherTextInput.Size = new System.Drawing.Size(351, 212);
+            this.boxCipherTextInput.TabIndex = 26;
+            this.boxCipherTextInput.Text = "";
+            // 
+            // boxCipherTextOutput
+            // 
+            this.boxCipherTextOutput.Location = new System.Drawing.Point(32, 345);
+            this.boxCipherTextOutput.Name = "boxCipherTextOutput";
+            this.boxCipherTextOutput.Size = new System.Drawing.Size(351, 212);
+            this.boxCipherTextOutput.TabIndex = 26;
+            this.boxCipherTextOutput.Text = "";
+            // 
+            // boxPlainTextOutput
+            // 
+            this.boxPlainTextOutput.Location = new System.Drawing.Point(597, 345);
+            this.boxPlainTextOutput.Name = "boxPlainTextOutput";
+            this.boxPlainTextOutput.Size = new System.Drawing.Size(351, 212);
+            this.boxPlainTextOutput.TabIndex = 26;
+            this.boxPlainTextOutput.Text = "";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1060, 581);
+            this.Controls.Add(this.boxPlainTextOutput);
+            this.Controls.Add(this.boxCipherTextOutput);
+            this.Controls.Add(this.boxCipherTextInput);
+            this.Controls.Add(this.boxPlainTextInput);
             this.Controls.Add(this.btnImportKeys);
             this.Controls.Add(this.btnExportKeys);
             this.Controls.Add(this.btnReadCipherfromFile);
@@ -306,10 +308,6 @@
             this.Controls.Add(this.btnGenerateKey);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
-            this.Controls.Add(this.boxPlainTextOutput);
-            this.Controls.Add(this.boxCipherTextOutput);
-            this.Controls.Add(this.boxCipherTextInput);
-            this.Controls.Add(this.boxPlainTextInput);
             this.Controls.Add(this.btnDecrypt);
             this.Controls.Add(this.btnEncrypt);
             this.Name = "Form1";
@@ -323,10 +321,6 @@
 
         private System.Windows.Forms.Button btnEncrypt;
         private System.Windows.Forms.Button btnDecrypt;
-        private System.Windows.Forms.TextBox boxPlainTextInput;
-        private System.Windows.Forms.TextBox boxCipherTextInput;
-        private System.Windows.Forms.TextBox boxCipherTextOutput;
-        private System.Windows.Forms.TextBox boxPlainTextOutput;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Button btnGenerateKey;
@@ -346,6 +340,10 @@
         private System.Windows.Forms.Button btnReadCipherfromFile;
         private System.Windows.Forms.Button btnExportKeys;
         private System.Windows.Forms.Button btnImportKeys;
+        private System.Windows.Forms.RichTextBox boxPlainTextInput;
+        private System.Windows.Forms.RichTextBox boxCipherTextInput;
+        private System.Windows.Forms.RichTextBox boxCipherTextOutput;
+        private System.Windows.Forms.RichTextBox boxPlainTextOutput;
     }
 }
 
