@@ -6,8 +6,6 @@ using System.Windows.Forms;
 using System.Numerics;
 using System.IO;
 using Microsoft.Office.Interop.Word;
-using Microsoft.Office.Interop.Word;
-//TODO: Read and save to Microsoft Word document
 
 namespace ElGamalCSharp
 {
