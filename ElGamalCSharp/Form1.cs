@@ -6,6 +6,8 @@ using System.Windows.Forms;
 using System.Numerics;
 using System.IO;
 using Microsoft.Office.Interop.Word;
+using Microsoft.Office.Interop.Word;
+//TODO: Read and save to Microsoft Word document
 
 namespace ElGamalCSharp
 {
@@ -536,6 +538,7 @@ namespace ElGamalCSharp
                     if (fileExtension == ".docx")
                     {
                         Microsoft.Office.Interop.Word.Application wordApp = new Microsoft.Office.Interop.Word.Application();
+                        //Document document1 = wordApp.Documents.Add();Range range = document1.Content;
                         byte[] RTFdata = Encoding.UTF8.GetBytes(boxPlainTextOutput.Rtf);
                         string tempPath = Path.Combine(Path.GetTempPath(), "temp.rtf");
                         File.WriteAllBytes(tempPath, RTFdata);
